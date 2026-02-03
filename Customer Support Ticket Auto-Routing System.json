@@ -1,0 +1,673 @@
+{
+  "name": "Customer Support Ticket Auto-Routing System",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b0b5f339-b7c4-4acf-b2c7-044e37f67482",
+              "leftValue": "={{$json[\"status\"]}}",
+              "rightValue": "Open",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1200,
+        16
+      ],
+      "id": "e34a2dfa-a7eb-434c-81b8-0f3fa5ff2668",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "70a5e928-d16a-4440-8998-90e756701b06",
+              "name": "message",
+              "value": "={{ $json.Message }}",
+              "type": "string"
+            },
+            {
+              "id": "487b60e1-d16d-45b5-8160-586ff6d2276a",
+              "name": "status",
+              "value": "Open",
+              "type": "string"
+            },
+            {
+              "id": "761a9f3c-08c5-42f8-b2da-048f7c7487d6",
+              "name": "Created on",
+              "value": "={{ $now }}",
+              "type": "string"
+            },
+            {
+              "id": "163e037f-6e07-46ed-998c-2b1d55629c90",
+              "name": "name",
+              "value": "={{ $json['Full Name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "7744afec-681e-41cb-9f79-87f78a9d3c1f",
+              "name": "email",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "56ff9e4b-989e-42d9-94b0-3360d0c2b0f8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message }}",
+                    "rightValue": "payment",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "c21e3583-fc16-4bc3-b4a1-ecbadb0b8411"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "445c01bd-35db-4b49-9e02-a2de1895d5b2",
+                    "leftValue": "={{ $json.message }}",
+                    "rightValue": "refund",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "49ad2b4d-7df8-447f-b2ea-9d3382ffd30a",
+                    "leftValue": "={{ $json.message }}",
+                    "rightValue": "billing",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        0
+      ],
+      "id": "e1462aa8-d066-4ad5-82b8-c438b6291a2a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        16
+      ],
+      "id": "fa18a605-39d7-4f97-8d08-dc088b2d37e5",
+      "name": "Wait",
+      "webhookId": "0e09e4b4-c20f-4353-94b8-efc0e8818cad"
+    },
+    {
+      "parameters": {
+        "sendTo": "Put email address here",
+        "subject": "New Support Ticket",
+        "message": "=New ticket received:\nName: {{$json.name}} \nEmail: {{$json.email}} \nMessage: {{$json.message}}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        16
+      ],
+      "id": "96b59f3e-e38d-46b5-ae2c-ba038bb2de47",
+      "name": "Send a message1",
+      "webhookId": "176a2fbc-9081-4a91-bc7e-d4fc4bab10d9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VVlvEZvxA0njWaFG",
+          "name": "Use this"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "Put email address here",
+        "subject": "New Support Ticket",
+        "message": "=New ticket received:  Name: {{$json.name}} Email: {{$json.email}} Message: {{$json.message}}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        160
+      ],
+      "id": "8770fb9e-f6cf-4764-9d36-ec16940ea851",
+      "name": "Send a message2",
+      "webhookId": "176a2fbc-9081-4a91-bc7e-d4fc4bab10d9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VVlvEZvxA0njWaFG",
+          "name": "Use this"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Swimming Registration Form.",
+        "formDescription": "Please fill the form to register and secure your swimming lessons with Godald.",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "Full Name",
+              "fieldLabel": "Full-Name",
+              "placeholder": "Full name",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Email",
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "email.....",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Message",
+              "fieldLabel": "Message",
+              "placeholder": "Input.....",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "Submit Form."
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [
+        -320,
+        0
+      ],
+      "id": "382cb0ac-dda7-4632-8639-e4e7e3997e1c",
+      "name": "Form to fill.",
+      "webhookId": "a37072b1-b260-42c7-b5f1-ebf02bbc49c7"
+    },
+    {
+      "parameters": {
+        "sendTo": "Put email address here",
+        "subject": "New Support Ticket",
+        "message": "=New ticket received!\n\nName: {{ $json.name }}\nEmail: {{ $json.email }}\nMessage: {{ $json.message }}\nCreated On: {{ $json['Created on'] }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        -128
+      ],
+      "id": "f829f71a-1e80-49ca-8833-21abf11bdde7",
+      "name": "Billing",
+      "webhookId": "176a2fbc-9081-4a91-bc7e-d4fc4bab10d9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VVlvEZvxA0njWaFG",
+          "name": "Use this"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1kjnCoJ1WuUVlA1RrcfVzAgRn-KhHPeiUEvIbpbeyMG4"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1593081873,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kjnCoJ1WuUVlA1RrcfVzAgRn-KhHPeiUEvIbpbeyMG4/edit#gid=1593081873"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "={{ $('Edit Fields').item.json.status }}",
+            "Message": "={{ $('Edit Fields').item.json.message }}",
+            "Email": "={{ $('Edit Fields').item.json.email }}",
+            "Name": "={{ $('Edit Fields').item.json.name }}",
+            "Created at": "={{ $('Edit Fields').item.json['Created on'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Ticket-ID",
+              "displayName": "Ticket-ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Created at",
+              "displayName": "Created at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        592,
+        16
+      ],
+      "id": "ecbf2bf8-5bbd-4ff0-b83d-cdd82765719d",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "yOt7w93ELrczJ6Qs",
+          "name": "Use Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Customer Support Ticket Auto-Routing System explained.\n``````Customer submits a form with a message and status as Open, switch node reads the message and decides which team to send it to, after sending the issue to the team, the customer info is updated in the google sheet form. N8N waits for 24 hours and checks the google sheet and if the status is still Open(meaning the customer issue has not been resolved yet), N8N escalates and sends an email to the supervisor or any other person above who can follow up with the teams and see why they did not attend to the customer's ticket``````",
+        "height": 144,
+        "width": 1456
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        -304
+      ],
+      "typeVersion": 1,
+      "id": "999fdfb8-b0bf-41ab-a99e-57a061ee2024",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1kjnCoJ1WuUVlA1RrcfVzAgRn-KhHPeiUEvIbpbeyMG4"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1593081873,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kjnCoJ1WuUVlA1RrcfVzAgRn-KhHPeiUEvIbpbeyMG4/edit#gid=1593081873"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1008,
+        16
+      ],
+      "id": "9eb4f4de-378f-4079-ae5e-50df22303904",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "yOt7w93ELrczJ6Qs",
+          "name": "Use Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "Put email address here",
+        "subject": "🚨 Escalation: Unresolved Support Ticket",
+        "message": "=Ticket has not been resolved after 24 hours.  Ticket ID: {{$json.ticket_id}} Message: {{$json.message}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1440,
+        0
+      ],
+      "id": "bcaa7f9a-9300-4f40-a96b-e4ebb248f4ae",
+      "name": "Send a message",
+      "webhookId": "3fe08b18-a4d3-4ed2-96af-3230c099fa3a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VVlvEZvxA0njWaFG",
+          "name": "Use this"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Form to fill.": [
+      {
+        "json": {
+          "Full Name": "gjgjg",
+          "Email": "vhv@gamil.com",
+          "Message": "i want a refund",
+          "submittedAt": "2026-01-24T10:48:55.785-05:00",
+          "formMode": "test"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Edit Fields": [
+      {
+        "json": {
+          "message": "i want a refund",
+          "status": "Open",
+          "Created on": "2026-01-24T10:49:12.181-05:00",
+          "name": "gjgjg",
+          "email": "vhv@gamil.com"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Append row in sheet": [
+      {
+        "json": {
+          "Status": "Open",
+          "Message": "i want a refund",
+          "Email": "vhv@gamil.com",
+          "Name": "gjgjg",
+          "Created at": "2026-01-24T10:49:12.181-05:00"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Get row(s) in sheet": [
+      {
+        "json": {
+          "row_number": 2,
+          "Name": "gjgjg",
+          "Email": "vhv@gamil.com",
+          "Message": "i want a refund",
+          "Status": "Open",
+          "Created at": "2026-01-24T10:49:12.181-05:00"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Billing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form to fill.": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Billing": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "e1b8100b-6b3d-4f4b-8330-657b6c86d7e0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "db0294dc48fab0c86d935138ad7921374de2ea6a86b5f49dd6da586f127dc774"
+  },
+  "id": "IMsRdfHU2IT46dMt8vLae",
+  "tags": []
+}

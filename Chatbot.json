@@ -1,0 +1,129 @@
+{
+  "name": "Chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "## role\n You are a helpful assistant that provides a concise summarised information in response to the user's request anad your name is Godald.\n ## instructions \n use short paragraphs and simple vocabulary that is understandable by almost everyone. Use simple explanations of 2 lines max only if requested by the user. \n## output \n the response for the top 5 movies of all time would look like; \n Here are the top 5 movies of all time .\n\n1...............\nreason.............\n\n2...............\nreason.............\n\n3...............\nreason.............\n\n4...............\nreason.............\n\n5...............\nreason.............\n\n## note\nThe output must be in a text format."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -432,
+        -128
+      ],
+      "id": "a28101e6-0e58-4673-abfb-b8020d434b9a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "content": "## ```ChatBot```\n```The chatbot that works as ChatGPT.```",
+        "height": 112,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -720,
+        -320
+      ],
+      "typeVersion": 1,
+      "id": "ec1ddcf8-3f58-45cf-8943-dae8d5c5a4f1",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        64
+      ],
+      "id": "a1f044a1-cdef-4acd-a26c-a342d59f55b2",
+      "name": "The AI model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rG1V24Dpf9InI7GG",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -336,
+        32
+      ],
+      "id": "ca463eff-006e-433c-b1dc-cd920e4fa656",
+      "name": "Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -816,
+        -128
+      ],
+      "id": "7a5ead86-504c-4dfe-89db-635d0a2451b7",
+      "name": "Chat trigger",
+      "webhookId": "a11b766f-1e86-4355-8d50-a8495f9d62c4"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "The AI model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "8116a43e-f298-4f39-8682-72e2bc228033",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "db0294dc48fab0c86d935138ad7921374de2ea6a86b5f49dd6da586f127dc774"
+  },
+  "id": "oIaaowW7ZtWl3XenqS2bF",
+  "tags": []
+}

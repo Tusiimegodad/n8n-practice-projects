@@ -1,0 +1,214 @@
+{
+  "name": "on from & AI Friendship",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Reach out",
+        "formDescription": "Get instant feedback",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "First name",
+              "fieldLabel": "First name",
+              "placeholder": "What is your first name?",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Second name",
+              "fieldLabel": "Second name",
+              "placeholder": "What is your second name?",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Email",
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "What is your email?",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Contact",
+              "fieldLabel": "Phone",
+              "fieldType": "number",
+              "placeholder": "What is your phone number?",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Message",
+              "fieldLabel": "Leave a message.",
+              "placeholder": "Text...",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "buttonLabel": "Submit"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "560699ca-422c-47cf-bcae-ced0f7e68d07",
+      "name": "On form submission",
+      "webhookId": "6fc776d6-1eec-4946-bc42-fce3291918ac"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4",
+          "mode": "id"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=Hello  {{ $json[\"First name\"] }} {{ $json[\"Second name\"] }},\n\nThis is your AI assistant, you can call me Tusiime.\nFrom the form you submited a moment ago, I see that your email is {{ $json.Email }} and you phone number is {{ $json.Contact }}. Please confirm that this is the right information.\n\nThanks!\nTusiime"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "06c7a9cf-bbcc-462a-b419-30de66b00a2f",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "89BxEulA0xmzAiBU",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "={{ $json; \"email\" }}",
+        "subject": "Re-confirmation.",
+        "message": "drug and drop the message from AI",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "c0599a36-38f3-4428-8e71-bc43927c1a94",
+      "name": "Send message and wait for response",
+      "webhookId": "ae8ecc24-2fea-4bea-96f7-d7dd3070ec56",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VVlvEZvxA0njWaFG",
+          "name": "Use this"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "godald",
+        "subject": "Re-Congraturatory Email.",
+        "emailType": "text",
+        "message": "=Congraturstions Godald,  you just got a new  friend named  {{ $('On form submission').item.json['First name'] }} and their contact is {{ $('On form submission').item.json.Contact }} please reach out to them ASAP.\n\nThanks!\nYour assistsnt AI",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        0
+      ],
+      "id": "99870335-a43a-4fcb-9898-01aee6818b43",
+      "name": "Send a message",
+      "webhookId": "60520be2-843c-4a5f-903d-861ded6bd075",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VVlvEZvxA0njWaFG",
+          "name": "Use this"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Workflow explained \nStranger wants to be friends with Godadld, they fill a form, AI sends a confirmation email , when they confirm their info, Godald recaives a message telling him he just got a new friend.",
+        "width": 416
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        -208
+      ],
+      "typeVersion": 1,
+      "id": "e3674d37-0242-4d11-bd9a-b8d3447588fe",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "51027930-c717-46a2-9cd7-7b93a0d1872d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "db0294dc48fab0c86d935138ad7921374de2ea6a86b5f49dd6da586f127dc774"
+  },
+  "id": "-frshPDbPMjo8Smi67BIt",
+  "tags": [
+    {
+      "updatedAt": "2026-01-08T15:17:08.724Z",
+      "createdAt": "2026-01-08T15:17:08.724Z",
+      "id": "p2W67EVyYnpogHvC",
+      "name": "webhook"
+    }
+  ]
+}

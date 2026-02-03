@@ -1,0 +1,279 @@
+{
+  "name": "Social Media Content Scheduler",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kjnCoJ1WuUVlA1RrcfVzAgRn-KhHPeiUEvIbpbeyMG4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kjnCoJ1WuUVlA1RrcfVzAgRn-KhHPeiUEvIbpbeyMG4/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -304,
+        -96
+      ],
+      "id": "e30e758a-1c31-428e-b35b-0af8677bf67e",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HCmclDU9TVdKmbg7",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -448,
+        -96
+      ],
+      "id": "004e352f-8bfa-4e02-82d7-528d8977fd87",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0b98de89-10ab-4949-8dbe-66150bce6672",
+              "leftValue": "={{$json[\"date\"] === $moment().format(\"YYYY-MM-DD\") && $json[\"status\"] === \"pending\"}}\n",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -96,
+        -96
+      ],
+      "id": "714efe28-de2e-466f-87d1-a5e8cc8ca56e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "Put email address here",
+        "subject": "Re Menu update",
+        "message": "=Hello Godald,\n{{ $json.Post_Text }}\nThanks!\nGold",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        -112
+      ],
+      "id": "6b7cce43-7ed1-4c8d-8e59-3cdc4dcff535",
+      "name": "Send a message",
+      "webhookId": "6d01fea9-a937-4da0-bc36-e7f2c73db3e6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "lsa5TSDyWaNJxlEP",
+          "name": "Gmail account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1kjnCoJ1WuUVlA1RrcfVzAgRn-KhHPeiUEvIbpbeyMG4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kjnCoJ1WuUVlA1RrcfVzAgRn-KhHPeiUEvIbpbeyMG4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "=Posted",
+            "Date": "=\n{{ $('If').item.json.Date }}"
+          },
+          "matchingColumns": [
+            "Date"
+          ],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Platform",
+              "displayName": "Platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Post_Text",
+              "displayName": "Post_Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        304,
+        -112
+      ],
+      "id": "a7f31b9c-0fef-4960-97f0-aa8ea2bf9fc1",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HCmclDU9TVdKmbg7",
+          "name": "Google Sheets account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "e9dd6885-b032-4b3d-b08f-595dfdcc42eb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "db0294dc48fab0c86d935138ad7921374de2ea6a86b5f49dd6da586f127dc774"
+  },
+  "id": "GASy3d2v5wWfgBNBnZW31",
+  "tags": []
+}

@@ -1,0 +1,238 @@
+{
+  "name": "Onboarding",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Submit your information here.",
+        "formDescription": "This is an Onbording form. for left clicks. Fill put the filled and our team will get back to you shortly.",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "First Name",
+              "fieldLabel": "First Name",
+              "placeholder": "Your first name",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Last Name",
+              "fieldLabel": "Last Name",
+              "placeholder": "Your last name",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Email",
+              "fieldLabel": "Email Adress",
+              "fieldType": "email",
+              "placeholder": "Your email",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Contact",
+              "fieldLabel": "Phone number",
+              "fieldType": "number",
+              "placeholder": "(256) 768.............",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Design preference.",
+              "fieldLabel": "Design preference",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "slick"
+                  },
+                  {
+                    "option": "Minimalistic"
+                  },
+                  {
+                    "option": "luxurious"
+                  },
+                  {
+                    "option": "Playful"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldName": "Company description.",
+              "fieldLabel": "Company description.",
+              "placeholder": "We build systems that let help to elevate you business to the next level.",
+              "requiredField": true
+            },
+            {
+              "fieldName": "Time line",
+              "fieldLabel": "Time line",
+              "placeholder": "2-3 weeks",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "Get started!"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [
+        -384,
+        -32
+      ],
+      "id": "fb3e9888-9359-4cbb-8417-3972be0e4cac",
+      "name": "On form submission",
+      "webhookId": "85872b31-06ee-4255-bf66-461ba6968e8d"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a helpful email writing intelligent assistant."
+            },
+            {
+              "content": "=your task is to customise email template using the following data;\nFirst Name: {{ $json['First Name'] }}\nLast Name: {{ $json['Last Name'] }}\nEmail Adress: {{ $json.Email }}\nContact: {{ $json.Contact }}\nDesign preference: {{ $json['Design preference.'] }}\nCompany description: {{ $json['Company description.'] }}\nTime line: {{ $json['Time line'] }}\n\nEmail tempelate;\nHey {First Name},\n\nHow are you? Thanks for submiting your Onboarding form a moment ago.\nI loved reading about your company {paraphrased company description}.\nI see here that you are looking for a {design preference} sort of thing and you are looking to have it done in {time line}. Could you please confirm your number for me? {formatted contact}. Right?\nCould you please let me know if I am missing anything?\nThanks! \n\nGodald\n\nDo not include the subject line."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -208,
+        -32
+      ],
+      "id": "9ff80360-9eb3-4cfe-8eb8-0e18c926a204",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DOSqAZBxCLUJRTAs",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "Put email address here",
+        "subject": "Hello Godald,",
+        "emailType": "text",
+        "message": "={{ $json.content.parts[0].text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        -32
+      ],
+      "id": "f3cf60a2-3c14-477f-9c90-c93f49651ae6",
+      "name": "Onbording form",
+      "webhookId": "fc111e37-71f8-4c06-853d-c6c25fea3db0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VVlvEZvxA0njWaFG",
+          "name": "Use this"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        144,
+        -32
+      ],
+      "id": "b8cb7bc3-8f50-40a9-8121-72581e250ebb",
+      "name": "Wait",
+      "webhookId": "b5ce006d-a62d-49c1-939f-a8768d0a5d1c"
+    },
+    {
+      "parameters": {
+        "content": "## Onboard submission form explained.\n``A client who wants some work done for their company sends  sends an info, AI model drafts and sends a reply asking them to confirm their info and waits a moment and then sends an email to the designing company ``",
+        "width": 928
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -448,
+        -224
+      ],
+      "typeVersion": 1,
+      "id": "979807d3-4173-4390-afee-173dfb3e6f88",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "Onbording form": [
+      {
+        "json": {
+          "id": "19bb2b6ef50b7c89",
+          "threadId": "19bb2b6ef50b7c89",
+          "labelIds": [
+            "UNREAD",
+            "SENT",
+            "INBOX"
+          ]
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Onbording form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "0965de61-c3d9-446b-aa74-d8a4b3a5e9ac",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "db0294dc48fab0c86d935138ad7921374de2ea6a86b5f49dd6da586f127dc774"
+  },
+  "id": "C3OEc-aQlQxh-WjhvuDeS",
+  "tags": []
+}

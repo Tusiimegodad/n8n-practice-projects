@@ -1,0 +1,402 @@
+{
+  "name": "Daily sales calculator",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b9e2037f-0ced-4059-966c-b894f055ec51",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1kjnCoJ1WuUVlA1RrcfVzAgRn-KhHPeiUEvIbpbeyMG4"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 327025080,
+          "mode": "list",
+          "cachedResultName": "Sheet3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kjnCoJ1WuUVlA1RrcfVzAgRn-KhHPeiUEvIbpbeyMG4/edit#gid=327025080"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        0
+      ],
+      "id": "083b9a42-4f31-432d-9fbc-da1fd4ba85c1",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "yOt7w93ELrczJ6Qs",
+          "name": "Use Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "53a5e6d1-5e2d-4f64-bde8-8ce34f070356",
+              "leftValue": "={{ $json.Date }}",
+              "rightValue": "={{ $now.minus(1, 'days').format('yyyy-MM-dd') }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        320,
+        0
+      ],
+      "id": "f75bef59-40a3-43b2-a1b4-dc4faf4362ca",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "974d14eb-2ecd-4edf-aaca-7f4977534d88",
+              "name": "Total amount",
+              "value": "={{ $json.sum_Amount }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        688,
+        -16
+      ],
+      "id": "22f3de02-debc-441d-b2cf-359a2e872489",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "sendTo": "Put email address here",
+        "subject": "Re-Yesterday's sales.",
+        "message": "=Hello Godald,\nThe yesterday,s total sells are {{ $('Summarize').item.json.sum_Amount }}USD and the biggest customer of the day was {{ $('Summarize').item.json['max_Customer-Email'] }}\n\nThanks!\nGold",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        -16
+      ],
+      "id": "28201fd5-72b1-44aa-aaf8-f9f583f9e6c3",
+      "name": "Send a message",
+      "webhookId": "e1e374c0-148d-47f4-9c57-1a11b8e3c78e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VVlvEZvxA0njWaFG",
+          "name": "Use this"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Amount"
+            },
+            {
+              "aggregation": "max",
+              "field": "Customer-Email"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        -16
+      ],
+      "id": "4cefd5d3-0cb7-4146-9a78-bfc6fa644a29",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "content": "## Explanation\n``Every morning at 6 am, n8n goes to the Sales data-base and looks for the previous day's data and calculataes the total amout made that day, then finds the customer who bought the most items that day and writes an email to the boss. The email shows the total sales and the biggest customer of the day``",
+        "width": 672
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        144,
+        -240
+      ],
+      "typeVersion": 1,
+      "id": "49328673-9c16-4f9d-8a3e-29da25901cde",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "Get row(s) in sheet": [
+      {
+        "json": {
+          "row_number": 2,
+          "Date": "2026-01-22",
+          "Order-id": "ORD-1001",
+          "Amount": 14,
+          "Customer-Email": "alice@gmail.com"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Date": "2026-01-22",
+          "Order-id": "ORD-1002",
+          "Amount": 120,
+          "Customer-Email": "bob@yahoo.com"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Date": "2026-01-22",
+          "Order-id": "ORD-1003",
+          "Amount": 75,
+          "Customer-Email": "alice@gmail.com"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Date": "2026-01-21",
+          "Order-id": "ORD-0998",
+          "Amount": 60,
+          "Customer-Email": "heidi@yahoo.com"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Date": "2026-01-21",
+          "Order-id": "ORD-0999",
+          "Amount": 90,
+          "Customer-Email": "dana@gmail.com"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Date": "2026-01-21",
+          "Order-id": "ORD-1000",
+          "Amount": 110,
+          "Customer-Email": "eric@yahoo.com"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Date": "2026-01-20",
+          "Order-id": "ORD-0995",
+          "Amount": 35,
+          "Customer-Email": "fred@gmail.com"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Date": "2026-01-20",
+          "Order-id": "ORD-0996",
+          "Amount": 200,
+          "Customer-Email": "grace@hotmail.com"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 10,
+          "Date": "2026-01-20",
+          "Order-id": "ORD-0997",
+          "Amount": 80,
+          "Customer-Email": "heidi@yahoo.com"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 11,
+          "Date": "2026-01-23",
+          "Order-id": "ORD-1004",
+          "Amount": 150,
+          "Customer-Email": "treyz@yahoo.com"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 12,
+          "Date": "2026-01-23",
+          "Order-id": "ORD-1005",
+          "Amount": 20,
+          "Customer-Email": "heidi@yahoo.com"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 13,
+          "Date": "2026-01-23",
+          "Order-id": "ORD-1006",
+          "Amount": 372,
+          "Customer-Email": "heidi@yahoo.com"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 14,
+          "Date": "2026-01-23",
+          "Order-id": "ORD-1007",
+          "Amount": 2,
+          "Customer-Email": "heidi@yahoo.com"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "94c021c2-9f83-4f73-b369-be28b8c25bb0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "db0294dc48fab0c86d935138ad7921374de2ea6a86b5f49dd6da586f127dc774"
+  },
+  "id": "xKvtNS-V5IWxbAu4ufbEg",
+  "tags": []
+}
